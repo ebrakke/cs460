@@ -4,7 +4,6 @@ var UserModel = require('../models/UserModel');
 var AuthCtrl = require('./AuthCtrl');
 var bcrypt = require('bcryptjs');
 var crypto = require('crypto');
-var e = require('./errors');
 
 
 /* UserCtrl Constructor */
@@ -28,7 +27,7 @@ UserCtrl.create = function(userData, callback) {
         var response = User.getId();
         response.then(function(results) {
             /* extract the uid */
-            User.uid = results[0][0].uid;  // Extract the ID from the response
+            User.uid = results[0][0].uid.toString();  // Extract the ID from the response
             User.auth = crypto.createHash('sha1').update(User.uid).update(Math.random().toString(32).slice(2)).digest('hex');  // Generate a new auth token
 
             var response = User.createAuthToken();  // Put the auth token into the DB
@@ -44,32 +43,10 @@ UserCtrl.create = function(userData, callback) {
             callback(err, null);
         });
     }, function(err) {
-        callback(e.usernameExists, null);
+        callback(err, null);
     });
 }
 
-
-/* Update user
-	 @param {string[]} newInfo - new username, pw, email
-*/
-UserCtrl.update = function(username, authToken, newInfo, callback) {
-    var response = AuthCtrl.validByAuthToken(username, authToken, function(err, result) {
-        var User = result;
-
-        User.username = newInfo.username ? newInfo.username : User.username;
-        User.password = newInfo.password ? bcrypt.hashSync(newInfo.password, 8) : null;
-        User.email = newInfo.email ? newInfo.email : User.email;
-        var newUser = new UserModel(User);
-        var response = newUser.update();
-        delete newUser.password;
-
-        response.then(function(response){
-            callback(null, newUser);
-        }, function(err) {
-            callback(err, null);
-        });
-    });
-}
 
 /* Get a user by username*/
 UserCtrl.getByUsername = function(username, callback) {
