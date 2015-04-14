@@ -44,5 +44,9 @@ router.get('/somethingwentwrong', function(req, res) {
     res.render('failure', {type: type});
 });
 
+router.get('/upload', function(req, res) {
+    res.render('upload', {albums: []});
+})
+
 
 module.exports = router;

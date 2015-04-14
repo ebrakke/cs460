@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    script(src='/javascripts/upload.js')
+    div.container
+        h1 Upload a photo!
+        div.btn-group
+            button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown', aria-expanded='false') Choose an album <span class='caret'></span>
+            ul.dropdown-menu(role='menu')
+                each album in albums
+                    li
+                        a(href='#', name != album.id, id='album') #{album}
+                li.divider
+                li
+                    a(href='#', id='createnew') Create New Album
+        form.form-group(method='post', action='/photo', id='upload-form', enctype='multipart/form-data')
+            label(for='photo') Choose a file
+            input(type='file', name='photoFile', id='photo')
+            button.btn.btn-default(type='submit') Upload!
+        

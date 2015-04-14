@@ -5,8 +5,10 @@ block content
         div.container
             p.
                 Hello, #{userInfo.first_name}
-            a.btn.btn-default(href='/user/logout', name='logout') Logout
-            a.btn.btn-default(href='/user/friends', name='friends') View Friends
+            a.btn.btn-default.pull-right(href='/user/logout', name='logout') Logout
+            a.btn.btn-primary.btn-nav(href='/user/friends', name='friends') View Friends
+            a.btn.btn-info.btn-nav(href='/upload', name='upload') Upload Photos
+            a.btn.btn-success.btn-nav(href='/recommend', name='recommendations') Recommendations
     else 
         div.container
             div.btn-group
@@ -15,4 +17,8 @@ block content
     div.container
         div.jumbotron
             h1 Welcome to CS460 Picture share
+    div.col-md-8
+        h2 Here are the 5 most recently uploaded photos 
+        a.btn.btn-info.pull-right(href='/photos/all') View all photos
+        
             

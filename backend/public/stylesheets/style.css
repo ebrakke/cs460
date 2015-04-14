@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+.btn-nav{
+    margin-right: 2px;
+    margin-left: 2px;
+}
