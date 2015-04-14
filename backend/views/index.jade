@@ -4,8 +4,9 @@ block content
     if userInfo
         div.container
             p.
-                Welcome to the website #{userInfo.first_name}
+                Hello, #{userInfo.first_name}
             a.btn.btn-default(href='/user/logout', name='logout') Logout
+            a.btn.btn-default(href='/user/friends', name='friends') View Friends
     else 
         div.container
             div.btn-group

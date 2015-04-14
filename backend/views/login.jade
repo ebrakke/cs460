@@ -6,7 +6,7 @@ block content
         form.form-horizontal(role='form', action='/user/login', method='post')
             div.form-group
             label(for="username") Username 
-            input.form-control(type="text", name='username', id="username")
+            input.form-control(type="text", name='username', id="username", value != username)
             
             div.form-group
             label(for="password") Password
@@ -14,3 +14,7 @@ block content
             
             div.form-group
             button.btn.btn-default(type='submit') Login
+        if error
+            div.container
+                p.
+                    Invalid username or password

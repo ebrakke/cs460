@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    form.form-horizontal(role='form', action='/user/friend', method='post')
+        input.form-control(type='hidden', name='friend', value != user._uid)
+        button.btn.btn-primary(type='submit') Friend
+    
+    div.container
+        h1 #{user.name.first} #{user.name.last}
+        h2 Bio
+        table.table
+            tr
+                td Location
+                td #{user.location.city}, #{user.location.state}
+            tr
+                td DOB
+                td #{user.dob}
+            tr
+                td Pictures
+                td
+                    a(href='/user/pictures?id=' + user._uid) Click here!
+        

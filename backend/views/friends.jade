@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    div.container
+        h1 Here are your friends
+        table.table
+            each friend in friends
+                tr
+                    td
+                        a(href='/user/' + friend.username) #{friend.first_name} #{friend.last_name}
+                    td
+                        a.btn.btn-danger(href='/user/unfriend?friend_id' + friend.uid) Delete
+                    
+                    
+            

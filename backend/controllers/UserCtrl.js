@@ -1,7 +1,7 @@
 'use strict';
 
 var UserModel = require('../models/UserModel');
-var AuthCtrl = require('./AuthCtrl');
+var ac = require('./AuthCtrl');
 var bcrypt = require('bcryptjs');
 var crypto = require('crypto');
 
@@ -27,9 +27,9 @@ UserCtrl.create = function(userData, callback) {
         var response = User.getId();
         response.then(function(results) {
             /* extract the uid */
-            User.uid = results[0][0].uid.toString();  // Extract the ID from the response
-            User.auth = crypto.createHash('sha1').update(User.uid).update(Math.random().toString(32).slice(2)).digest('hex');  // Generate a new auth token
-
+            User._uid = results[0][0].uid.toString();  // Extract the ID from the response
+            User._auth = crypto.createHash('sha1').update(User._uid).update(Math.random().toString(32).slice(2)).digest('hex');  // Generate a new auth token
+            console.log(User._auth);
             var response = User.createAuthToken();  // Put the auth token into the DB
             response.then(function(results) {
                 /* Return the user object to the router */
@@ -47,36 +47,50 @@ UserCtrl.create = function(userData, callback) {
     });
 }
 
+UserCtrl.addFriend = function(authToken, friend_id, callback) {
+    ac.validByAuthToken(authToken, function(err, user) {
+        if(!err) {
+            var User = new UserModel(user);
+            var response = User.addFriend(parseInt(friend_id))
+            response.then(function() {
+                callback(null, 'success');
+            }, function(err) {
+                callback(1, null)
+            });
+        } else {
+            callback(2, null);
+        }
+    });
+}
 
+UserCtrl.getFriends = function(authToken, callback) {
+    ac.validByAuthToken(authToken, function(err, user) {
+        if (!err) {
+            var User = new UserModel(user);
+            var response = User.getFriends()
+            response.then(function(friends) {
+                callback(null, friends[0]);
+            }), function(err) {
+                callback(err, null)
+            };
+        } else {
+            callback(err, null);
+        }
+    });
+}
 /* Get a user by username*/
 UserCtrl.getByUsername = function(username, callback) {
     var response = UserModel.getByUsername(username);
     response.then(function(results) {
             if (results[1].rowCount === 0){
-                callback(config.error.userNotFound, null);
+                callback(1, null);
             }
-            User = new UserModel(results[0][0]);
-            var response = User.getRooms();
-            response.then(function(results) {
-
-            })
-
-            callback(err, user);
+            var User = new UserModel(results[0][0]);
+            callback(null, User);
     }, function(err) {
         callback(err, null);
     });
 }
 
-/* Get a user by id */
-UserCtrl.getById = function(id, callback) {
-    var response = UserModel.getById(id);
-    response.then(function(results) {
-        var err;
-        if (results[1].rowCount === 0){err = 'User not found'}
-        callback(err,results[0][0]);
-    }, function(err) {
-        callback(err, null);
-    });
-}
 
 module.exports = UserCtrl;

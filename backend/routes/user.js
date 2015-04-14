@@ -8,7 +8,7 @@ user.post('/create', function(req, res) {
     var userData = req.body;
     uc.create(userData, function(err, response) {
         if (!err) {
-            res.cookie('auth', response.auth, {httpOnly: true, path:'/'});
+            res.cookie('auth', response._auth, {httpOnly: true, path:'/'});
             res.redirect('/');
         } else {
             res.json(err);
@@ -18,13 +18,23 @@ user.post('/create', function(req, res) {
 
 /* Add a friend */
 user.post('/friend', function(req, res) {
-    var username = req.body.username;
+    var auth = req.cookies.auth;
     var friend = req.body.friend;
-    uc.friend(username, friend, function(err, response) {
-        if (!err) {
-            res.json(response);
+    uc.addFriend(auth, friend, function(err, response) {
+        if(!err) {
+            res.redirect('/success');
         } else {
-            res.json(err);
+            switch (err) {
+                case 1:
+                    res.redirect('/somethingwentwrong?type=friend');
+                    break;
+                case 2:
+                    res.clearCookie('auth');
+                    res.redirect('/login')
+                    break;
+                default:
+                    res.redirect('/somethingwentwrong?type=unknown');
+            }
         }
     });
 });
@@ -37,7 +47,7 @@ user.post('/login', function(req, res) {
             res.cookie('auth', user.authToken, {httpOnly: true, path:'/'});
             res.redirect('/');
         } else {
-            res.json(err);
+            res.redirect('/login?error=1&username=' + userInfo.username);
         }
     });
 });
@@ -47,29 +57,31 @@ user.get('/logout', function(req, res) {
     res.redirect('/');
 })
 
-/* Get a user */
-user.get('/:username', function(req, res) {
-    var username = req.params.username;
-    uc.getUser(username, function (err, response) {
-        if (!err) {
-            res.json(response)
+/* Get a users friends */
+user.get('/friends', function(req, res) {
+    var auth = req.cookies.auth;
+    uc.getFriends(auth, function(err, friends) {
+        if(!err) {
+            res.render('friends', {friends: friends});
         } else {
-            res.json(err);
+            res.redirect('/somethingwentwrong?type=show_friends');
         }
     });
 });
 
-/* Get a users friends */
-user.get('/:username/friends', function(req, res) {
+/* Get a user */
+user.get('/:username', function(req, res) {
     var username = req.params.username;
-    uc.getFriends(username, function(err, response) {
+    uc.getByUsername(username, function(err, user) {
         if(!err) {
-            res.json(response);
+            res.render('user', {user: user});
         } else {
-            res.json(err);
+            //res.redirect('/error?type=viewUser');
         }
     });
 });
+
+
 
 
 

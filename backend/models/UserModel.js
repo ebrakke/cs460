@@ -4,13 +4,13 @@ function User(userData) {
     this.username = userData.username;
     this.password = userData.password;
     this.email = userData.email;
-    this.name = {first: userData.first, last: userData.last};
+    this.name = {first: userData.first_name, last: userData.last_name};
     this.dob = userData.dob;
     this.gender = userData.gender;
     this.location = {city: userData.city, state: userData.state, country: userData.country};
     this.education = userData.education;
     this._uid = userData.uid;
-    this._auth;
+    this._auth = userData.authtoken;
 }
 
 // Access the uid because it's private
@@ -34,14 +34,24 @@ User.prototype.getAuthToken = function() {
 
 //Create an entry for a new user and his Bantrs auth token
 User.prototype.createAuthToken = function() {
-    var query = db.query('INSERT INTO auth VALUES (?, ?)', {replacements: [this.uid, this.auth], type:'INSERT'});
+    var query = db.query('INSERT INTO auth VALUES (?, ?)', {replacements: [this._uid, this._auth], type:'INSERT'});
+    return query;
+}
+
+User.prototype.addFriend = function(friend_id) {
+    var query = db.query('INSERT INTO friends VALUES (?, ?)', {replacements: [this._uid, friend_id]});
+    return query;
+}
+
+User.prototype.getFriends = function() {
+    var query = db.query('SELECT u.uid, u.username, u.first_name, u.last_name, u.email from users u, friends f where u.uid = f.friend_id and f.uid = ?', {replacements: [this._uid]});
     return query;
 }
 
 // Get a User object by the username
 User.getByUsername = function(username) {
     // Send the query to the dbConnector
-    var query = db.query("SELECT uid, username, email, first_name, last_name FROM users where username = ?", {replacements: [username]});
+    var query = db.query("SELECT uid, username, email, first_name, last_name, city, state, dob FROM users where username = ?", {replacements: [username]});
     return query;
 }
 
@@ -52,9 +62,9 @@ User.getHash = function(username) {
 }
 
 // Get a User object by the banstrsauth
-User.getByAuthToken = function(bantrsauth){
+User.getByAuthToken = function(auth){
     // var query = db.query('SELECT id, username, email FROM users WHERE uid = (select uid where banterauth = ? FROM auth)', {replacements: [bantrsauth]})
-    var query = db.query('SELECT u.username, u.uid, u.email, u.first_name, u.last_name FROM users u NATURAL JOIN auth a WHERE a.authtoken = ?',{replacements:[bantrsauth]});
+    var query = db.query('SELECT u.username, u.uid, u.email, u.first_name, u.last_name FROM users u NATURAL JOIN auth a WHERE a.authtoken = ?',{replacements:[auth]});
     return query;
 }
 
