@@ -11,7 +11,7 @@ AuthCtrl.validByUserPwd = function(userData, callback) {
 	var hash = UserModel.getHash(userData.username);  // Grab the password hash from the DB
 	hash.then(function(result) {
 		if (!result[0][0]) {
-			callback(e.invalidPassword, null);
+			callback('error', null);
 		} else {
 		var hash = result[0][0].password
 		/* Check that the password and the hash match */
@@ -23,14 +23,14 @@ AuthCtrl.validByUserPwd = function(userData, callback) {
 				var response = User.getAuthToken(User.uid);
 				/* Get the auth token */
 				response.then(function(authToken) {
-					User._auth = authToken[0][0].bantrsauth;
-					callback(null,{user:{username:User.username, email:User.email, uid:User._uid,}, authToken:User._auth});
+					User.auth = authToken[0][0].authtoken;
+					callback(null,{username:User.username, email:User.email, uid:User.uid, authToken:User.auth});
 				});
 			});
 
 		/* Password did not match */
 		} else {
-			callback(e.invalidPassword, null);
+			callback(err, null);
 		}
 	}
 	});
@@ -41,7 +41,7 @@ AuthCtrl.validByAuthToken = function(authtoken, callback){
 	response.then(function(result) {
 		var user = result[0][0];
 		if (!user) {
-			callback(e.invalidAuthToken, null);
+			callback('error', null);
 		} else {
 			callback(null, user);
 		}

@@ -1,0 +1,52 @@
+extends layout
+
+block content
+    div.container
+        h1 Create a user
+        form.form-horizontal(role="form", action='/user/create', method='post')
+            div.form-group
+            label(for="username") Username 
+            input.form-control(type="text", name='username', id="username")
+            
+            div.form-group
+            label(for="password") Password
+            input.form-control(type="password", name='password', id='password')
+            
+            div.form-group            
+            label(for="firstName") First name
+            input.form-control(type="text", name='first', id="firstName")
+            
+            div.form-group
+            label(for="lastName") Last name
+            input.form-control(type="test", name='last', id='lastName')
+            
+            div.form-group
+            label(for='email') Email address
+            input.form-control(type='email', name='email', id='email')
+            
+            div.form-group
+            label(for='dob') Date of Birth (MM DD YYYY)
+            input.form-control(type='text', name='dob', id='dob')
+            
+            div.form-group
+            label(for='gender') Gender
+            input.form-control(type='text', name='gender', id='gender')
+            
+            div.form-group
+            label(for='city') City
+            input.form-control(type='text', name='city', id='city')
+            
+            div.form-group
+            label(for='state') State
+            input.form-control(type='text', name='state', id='state')
+            
+            div.form-group
+            label(for='country') Country
+            input.form-control(type='text', name='country', id='country')
+            
+            div.form-group
+            label(for='education') Education
+            input.form-control(type='text', name='education', id='education')
+            
+            div.form-group
+            button.btn.btn-default(type='submit') Create!

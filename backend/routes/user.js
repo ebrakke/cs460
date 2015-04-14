@@ -4,11 +4,12 @@ var uc = require('../controllers/UserCtrl');
 var ac = require('../controllers/AuthCtrl');
 
 /* Create a user */
-user.post('/', function(req, res) {
+user.post('/create', function(req, res) {
     var userData = req.body;
     uc.create(userData, function(err, response) {
         if (!err) {
-            res.json(response);
+            res.cookie('auth', response.auth, {httpOnly: true, path:'/'});
+            res.redirect('/');
         } else {
             res.json(err);
         }
@@ -29,16 +30,22 @@ user.post('/friend', function(req, res) {
 });
 
 /* Login a user */
-user.get('/login', function(req, res) {
-    var userInfo = {username: req.query.username, password: req.query.password};
+user.post('/login', function(req, res) {
+    var userInfo = req.body;
     ac.validByUserPwd(userInfo, function(err, user) {
         if (!err) {
-            res.json(user);
+            res.cookie('auth', user.authToken, {httpOnly: true, path:'/'});
+            res.redirect('/');
         } else {
             res.json(err);
         }
     });
 });
+
+user.get('/logout', function(req, res) {
+    res.clearCookie('auth', {path: '/'});
+    res.redirect('/');
+})
 
 /* Get a user */
 user.get('/:username', function(req, res) {

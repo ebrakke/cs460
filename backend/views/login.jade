@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    div.container
+        h1 Please Sign in
+        form.form-horizontal(role='form', action='/user/login', method='post')
+            div.form-group
+            label(for="username") Username 
+            input.form-control(type="text", name='username', id="username")
+            
+            div.form-group
+            label(for="password") Password
+            input.form-control(type="password", name='password', id='password')
+            
+            div.form-group
+            button.btn.btn-default(type='submit') Login

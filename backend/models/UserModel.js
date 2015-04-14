@@ -41,7 +41,7 @@ User.prototype.createAuthToken = function() {
 // Get a User object by the username
 User.getByUsername = function(username) {
     // Send the query to the dbConnector
-    var query = db.query("SELECT uid, username, email FROM users where username = ?", {replacements: [username]});
+    var query = db.query("SELECT uid, username, email, first_name, last_name FROM users where username = ?", {replacements: [username]});
     return query;
 }
 
@@ -54,7 +54,7 @@ User.getHash = function(username) {
 // Get a User object by the banstrsauth
 User.getByAuthToken = function(bantrsauth){
     // var query = db.query('SELECT id, username, email FROM users WHERE uid = (select uid where banterauth = ? FROM auth)', {replacements: [bantrsauth]})
-    var query = db.query('SELECT u.username, u.uid, u.email FROM users u NATURAL JOIN auth a WHERE a.authtoken = ?',{replacements:[bantrsauth]});
+    var query = db.query('SELECT u.username, u.uid, u.email, u.first_name, u.last_name FROM users u NATURAL JOIN auth a WHERE a.authtoken = ?',{replacements:[bantrsauth]});
     return query;
 }
 
