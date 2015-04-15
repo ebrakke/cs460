@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h1 #{album.name}
+    
+    each photo in album.photos
+        img(src = photo.path.slice(6))
+        h4 #{photo.path}

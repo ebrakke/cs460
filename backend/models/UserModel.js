@@ -68,4 +68,9 @@ User.getByAuthToken = function(auth){
     return query;
 }
 
+User.getAlbums = function(uid){
+    var query = db.query('SELECT album_id, name from albums where owner = ?', {replacements: [uid]});
+    return query;
+}
+
 module.exports = User;

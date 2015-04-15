@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var ac = require('../controllers/AuthCtrl');
+var uc = require('../controllers/UserCtrl');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -45,7 +46,16 @@ router.get('/somethingwentwrong', function(req, res) {
 });
 
 router.get('/upload', function(req, res) {
-    res.render('upload', {albums: []});
+    var auth = req.cookies.auth;
+    uc.getAlbums(auth, function(err, albums) {
+        if(!err) {
+            res.render('upload', {albums: albums})
+        } else if (albums.length === 0){
+            res.render('upload', {albums: []})
+        } else {
+            res.redirect('/login')
+        }
+    });
 })
 
 

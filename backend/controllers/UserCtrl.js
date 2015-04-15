@@ -1,5 +1,3 @@
-'use strict';
-
 var UserModel = require('../models/UserModel');
 var ac = require('./AuthCtrl');
 var bcrypt = require('bcryptjs');
@@ -90,6 +88,17 @@ UserCtrl.getByUsername = function(username, callback) {
     }, function(err) {
         callback(err, null);
     });
+}
+
+UserCtrl.getAlbums = function(authToken, callback) {
+    ac.validByAuthToken(authToken, function(err, user) {
+        if(!err) {
+            var response = UserModel.getAlbums(user.uid);
+            response.then(function(albums) {
+                callback(null, albums[0]);
+            })
+        }
+    })
 }
 
 
