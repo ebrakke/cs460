@@ -4,5 +4,8 @@ block content
     h1 #{album.name}
     
     each photo in album.photos
-        img(src = photo.path.slice(6))
-        h4 #{photo.path}
+        a(href='/photo/' + photo.photo_id)
+            img(src = photo.path.slice(6))
+        h4 #{photo.caption} 
+            each tag in photo.tags
+                a.tags(href='/photo/' + tag.tag) #{tag.tag} 

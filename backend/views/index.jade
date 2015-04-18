@@ -20,5 +20,8 @@ block content
     div.col-md-8
         h2 Here are the 5 most recently uploaded photos 
         a.btn.btn-info.pull-right(href='/photos/all') View all photos
+        each photo in photos
+            img(src != photo.path.slice(6))
+            h4 #{photo.caption}
         
             

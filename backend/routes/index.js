@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var ac = require('../controllers/AuthCtrl');
 var uc = require('../controllers/UserCtrl');
+var pc = require('../controllers/PhotoCtrl');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -9,14 +10,18 @@ router.get('/', function(req, res, next) {
     if(auth) {
         ac.validByAuthToken(auth, function(err, user) {
             if(!err) {
-                res.render('index', { userInfo: user});
+                pc.getRecent(function(err, photos) {
+                    res.render('index', {userInfo: user, photos: photos})
+                });
             } else {
                 res.clearCookie('auth');
                 res.redirect('/login');
             }
         })
     } else {
-        res.render('index');
+        pc.getRecent(function(err, photos) {
+            res.render('index', {photos: photos});
+        });
     }
 });
 

@@ -14,4 +14,12 @@ db.query = function(query,params){
     return query;
 }
 
+db.chain = function(queries) {
+    var chain = new Sequelize.Utils.QueryChainer();
+    for (q in queries) {
+        chain.add(sequelize.query(queries[q].string, queries[q].rep));
+    }
+    return chain
+}
+
 module.exports = db;
