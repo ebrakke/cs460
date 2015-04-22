@@ -1,4 +1,5 @@
 var db = require('../controllers/dbConnector');
+var pm = require('./PhotoModel');
 
 function Album(albumInfo) {
     this.album_id = albumInfo.album_id;
@@ -12,7 +13,10 @@ Album.prototype.create = function(callback) {
     var response = db.query("INSERT INTO albums (name, owner, date_created) VALUES (?, ?, current_date)", {replacements: [album.name, album.owner], type: 'INSERT'});
     response.then(function() {
         var query = db.query("SELECT album_id, name, owner, date_created from albums where name= ? and owner = ?", {replacements: [album.name, album.owner]})
-        callback(null,query);
+        query.then(function(response) {
+            var albums = Album.createModelObject(response);
+            callback(null, albums);
+        });
     }, function(err) {
         return callback(err, null);
     });
@@ -26,12 +30,29 @@ Album.prototype.getId = function() {
 
 Album.prototype.getPhotos = function() {
     var response = db.query("SELECT path, caption, photo_id from photos where album_id = ?", {replacements: [this.album_id]});
-    return response;
+    response.then(function(photos) {
+        var photos = photos[0];
+        var models;
+        for (photo in photos) {
+            models.push(new pm(photos[photo]));
+        }
+        return models;
+    });
 }
 
 Album.getPhotosById = function(id) {
     var response = db.query("SELECT path, caption, photo_id from photos where album_id = ?", {replacements: [id]});
     return response;
+}
+
+Album.createModelObject = function(response) {
+    var raw = response[0];
+    var albums;
+    for (album in raw) {
+        a = new Album(raw[album]);
+        albums.push(a);
+    }
+    return albums
 }
 
 module.exports = Album;

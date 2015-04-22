@@ -19,9 +19,12 @@ block content
             h1 Welcome to CS460 Picture share
     div.col-md-8
         h2 Here are the 5 most recently uploaded photos 
-        a.btn.btn-info.pull-right(href='/photos/all') View all photos
+            a.btn.btn-info(href='/photos/all') View all photos
         each photo in photos
-            img(src != photo.path.slice(6))
-            h4 #{photo.caption}
+            a(href='/photo/' + photo.photo_id)
+                img.img(src != photo.path.slice(6))
+            h4 #{photo.caption} 
+                each tag in photo.tags
+                    a.tags(href='/photo/' + tag.tag) #{tag.tag} 
         
             

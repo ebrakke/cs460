@@ -21,7 +21,7 @@ album.post('/add', function(req, res) {
     var photoInfo = {caption: req.body.caption, tags: req.body.tags.split(','), path: req.files.photoFile.path}
     ac.add(auth, albumInfo, photoInfo, function(err, photo) {
         if (err) { res.redirect('/somethingwentwrong?type=upload_photo')}
-        else { res.redirect('/album/' + albumInfo.album_id)}
+        else { res.redirect('/photo/' + photo.photo_id)}
     })
 })
 

@@ -101,5 +101,9 @@ UserCtrl.getAlbums = function(authToken, callback) {
     })
 }
 
+UserCtrl.increment = function(uid) {
+    UserModel.increment(uid);
+}
+
 
 module.exports = UserCtrl;

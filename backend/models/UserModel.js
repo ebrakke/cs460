@@ -73,4 +73,8 @@ User.getAlbums = function(uid){
     return query;
 }
 
+User.increment = function(uid) {
+    db.query('UPDATE users SET activity = activity + 1 WHERE uid = ?', {replacements:[uid], type:'UPDATE'});
+}
+
 module.exports = User;

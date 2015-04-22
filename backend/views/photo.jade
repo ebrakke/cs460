@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    div.container
+        img(src=photo.path.slice(6))
+        h4 #{photo.caption} 
+            each tag in photo.tags
+                a.tags(href='/photo/' + tag.tag) #{tag.tag} 

@@ -11,6 +11,7 @@ router.get('/', function(req, res, next) {
         ac.validByAuthToken(auth, function(err, user) {
             if(!err) {
                 pc.getRecent(function(err, photos) {
+                    console.log(photos);
                     res.render('index', {userInfo: user, photos: photos})
                 });
             } else {

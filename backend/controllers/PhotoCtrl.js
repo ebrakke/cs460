@@ -4,49 +4,36 @@ var PhotoModel = require('../models/PhotoModel');
 var PhotoCtrl = function() {}
 
 PhotoCtrl.add = function(photoInfo, albumInfo, callback) {
-    var Photo = new PhotoModel(photoInfo, albumInfo);
-    Photo.create(function(err, response) {
-        if (err) {callback(err.message, null)}
-        else {
-            response.then(function(photo){
-                Photo.photo_id = photo[0][0].photo_id;
-                Photo.insertTagsAndLink();
-                callback(null, null);
-            });
-        }
+    photoInfo.album_id = albumInfo.album_id;
+    var Photo = new PhotoModel(photoInfo);
+    Photo.create(function() {
+        Photo.insertTagsAndLink();
+        callback(null, Photo);
     });
 }
 
-PhotoCtrl.getTags = function(photo_id, callback) {
-    var response = PhotoModel.getTags(photo_id);
-    response.then(function(tags) {
-        callback(null, tags[0]);
-    })
-}
-
-PhotoCtrl.getAlbumPhotos = function(album_id, callback) {
-    var response = PhotoModel.getPhotoByAlbum(album_id);
-    response.then(function(res) {
-        var photos = res[0];
-        var count = 0;
-        for (photo in photos) {
-            PhotoCtrl.getTags(photos[photo].photo_id, function(err, tags) {
-                if (err) {callback(err, null)}
-                else {
-                    photos[count].tags = tags;
-                    if (count == photos.length - 1){ console.log(photos); callback(null, photos)}
-                    count++;
-                }
-            })
-        }
-    })
-}
-
-
 PhotoCtrl.getRecent = function(callback) {
+    var photos = [];
     var response = PhotoModel.getRecent();
-    response.then(function(photos) {
-        callback(null, photos[0])
+    response.then(function(query) {
+        var raw_photos = query[0];
+        raw_photos.forEach(function(p) {
+            var photo = new PhotoModel(p);
+            photo.getTags(function() {
+                photos.push(photo);
+                if(photos.length === raw_photos.length) {
+                    callback(null, photos);
+                }
+            });
+        })
+    });
+}
+
+PhotoCtrl.getPhoto = function(photo_id, callback) {
+    PhotoModel.getById(photo_id, function(photo) {
+        photo.getTags(function() {
+            callback(null, photo);
+        })
     })
 }
 
